@@ -6,7 +6,7 @@ La cooperativa ChasquiCoop tiene varias sucursales y una flota de vehículos que
 
 De cada vehículo se necesita saber su capacidad (expresada en cantidad de personas que puede transportar al mismo tiempo), su velocidad máxima, su color y su peso.
 
-* **Chevrolet Corsa**: es un vehículo con capacidad  de 4 personas, la velocidad máxima  de 150 km/h y pesan 1300 kg
+* **Chevrolet Corsa**: son vehículos con capacidad  de 4 personas, la velocidad máxima  de 150 km/h y pesan 1300 kg
 
 * **Económicos**: son vehículos que funcionan a gas y pueden tener instalado un tanque adicional. La capacidad, peso y velocidad máxima de estos vehículos depende de si cuenta con este tanque adicional. Puede llevar 4 si no tiene el tanque adicional, o 3 personas en caso contrario. Su velocidad máxima es 120 km/h sin tanque, y 110 km/h en otro caso. Su peso es 1200 kg, y se le suman 150 kg si tiene tanque adicional.
 
@@ -33,8 +33,8 @@ Se pide desarrollar las clases y los objetos bien definidos (WKO) que hagan falt
 
 Considerar los siguientes vehículos. Se utilizan nombres de fantasía porque de esta forma las sucursales pueden comunicarse mas eficientemente con ellos por radio.
 
-* Iron: un corsa de color rojo
-* Hulk: un corsa de color verde
+* Iron: un vehículo corsa de color rojo
+* Hulk: un vehículo corsa de color verde
 * Batimovil: un corsa de color negro
 * Humo: un económico de color gris con tanque adicional.
 * Humito: un económico de color gris SIN tanque adicional.
@@ -62,7 +62,7 @@ c. Que el auto no sea de un color contraindicado.
 
 
 
-### Requirimientos
+### Requerimientos
 
 * Modelar los objetos y clases necesarios para las reservas y viajes.
 
