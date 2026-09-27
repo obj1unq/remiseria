@@ -123,7 +123,7 @@ Considerar los siguientes vehículos. Se utilizan nombres de fantasía porque de
     - No Puede llevar sillas de ruedas
     - Es ruidoso
 
-## 2. Viajes y reservas
+## 2. Reservas
 
 Una reserva es una solicitud de un viaje.
  Se realiza indicando la cantidad de personas a llevar, la distancia a recorrer, el tiempo máximo de viaje en horas. 
@@ -181,148 +181,58 @@ Una reserva de 5 personas, 150 km de distancia, 1.5 horas de viaje, que necesita
 
   Probar que esta reserva **no puede** ser cumplida por millonario (el vehículo es ruidoso).
 
+## 3. Sucursales y viajes
 
-====================
+Cada sucursal de ChasquiCoop tiene una flota de vehículos y un historial de viajes realizados.
 
-Por otro lado, los viajes son reservas resueltas por un vehículo determinado. Y para que un vehículo pueda asignarse a un viaje se deben cumplir las siguientes condiciones:  
+El ciclo de uso habitual, desde la perspectiva de quien atiende una reserva en una sucursal, es el siguiente:
 
-a. Que la velocidad máxima supere a la velocidad promedio que necesita el viaje (calculada como distancia a recorrer / tiempo máximo) en al menos 10 km/h; 
-b. Que la capacidad del auto sea suficiente para la cantidad de personas de la reserva; 
-c. Que el auto no sea de un color contraindicado. 
+1. Un cliente hace una **reserva**, indicando cuántas personas viajan, la distancia, el tiempo máximo y sus necesidades especiales (ver sección 2).
+2. Se le consulta a la sucursal qué vehículos de **su flota** son capaces de cumplir esa reserva.
+3. Se elige uno de esos vehículos.
+4. Se registra el **viaje**: el hecho de que ese vehículo fue efectivamente asignado a esa reserva.
 
+Es importante notar la diferencia entre una reserva y un viaje: la reserva es un pedido, que puede o no llegar a concretarse, y que por sí sola no tiene ninguna relación con un vehículo en particular. El viaje, en cambio, es el registro de que una reserva fue efectivamente resuelta por un vehículo puntual de la flota. Una misma reserva podría, en principio, ser cumplida por varios vehículos distintos de la flota (por eso el paso 2 devuelve varios candidatos) — pero un viaje asocia esa reserva a **uno solo**, el que finalmente se usó.
 
+### Responsabilidades de una sucursal
 
-### Requerimientos
-
-* Modelar los objetos y clases necesarios para las reservas y viajes.
-
-* Poder determinar si un vehículo está habilitado para satisfacer una reserva. 
-
-* Agregarle a las sucursales la capacidad de responder qué autos pueden hacer un viaje.
-
-* Modelar el registro histórico de los servicios realizados por cada sucursal, a través del mensaje `registrarViaje(reserva,auto)`
-
-* Agregar en la sucursal la capacidad de responder:
-
-  - cuántos viajes hizo un vehículo para esa sucursal.
-  - cuántos viajes se hicieron que superen una determinada distancia.
-  - cuántos lugares quedaron libres en total (considerando todos sus viajes). Por ejemplo: si la sucursal hizo un viaje de 2 personas usando un auto de capacidad 5, ese viaje tuvo 3 lugares libres.
-
-## Retribución de los viajes
-
-Cada sucursal acuerda con las personas conductoras un valor por kilómetro y una retribución mínima por viaje. Por ejemplo, si el equipo de una sucursal acuerda 3 $/km y $30 de mínimo por viaje, entonces un viaje de 7 km se paga $30 (porque 3 x 7 = 21 no llega a 30), y un viaje de 25 km lo paga 75 pesos (3 x 25 = 75 supera el mínimo de 30).
-
-### Requerimientos
-
-Agregar en los objetos que corresponda el comportamiento que permita determinar cuánto pagarle a un vehículo, de acuerdo a los viajes que hizo para una determinada sucursal. 
-
-## Las Sucursales
-Cada `sucursal` de Chasquicoop tiene las siguientes responsabilidades:
- 
-  - administrar su flota (agregan y quitando vehículos), 
-  - Saber los colores disponibles de su flota
-  - obtener el color del vehículo cuya velocidad máxima sea la superior de toda la flota (si hay varios vehículos en esta situación, no importa cual se considere.)
-  - Indicar si es recomendable, es decir que tiene al menos 3 vehículos y todos pueden ir al menos a 100 km/h.
-  - Obtener la cantidad total de personas que puede transportar la sucursal, considerando solamente los autos de su flota cuya velocidad máxima sea mayor o igual a la velocidad indicada.
-  
-
-
-### Casos de prueba
-Se cuenta con dos sucursales: Villa Elisa y Varela.
-
-* La flota de Villa Elisa está integrada por: Iron, Hulk, Batimovil, Humo, Galletita. El peso total de la flota de Villa Elisa es 6300 kg, el color de su auto más rápido es beige y es una sucursal recomendable. El la cantidad de autos accesibles son 2 (Humito y Galletita).
-
-* La flota de Varela está compuesta por: Iron, Humo, Humito, Humito2, Traffic. El peso total de la flota de Varela es 10400 kg,  el color de su auto más rápido es rojo y NO es una sucursal recomendable (porque la traffic puede ir a 80 cómo máximo).
-
-Programar casos de prueba para lo anterior y agregar otros que permitan probar toda la funcionalidad
-
-
-=======
-La cooperativa ChasquiCoop tiene varias sucursales y una flota de vehículos que pueden dar servicio a una o mas sucursales. 
-
-## Flota y Sucursales
-
-De cada vehículo se necesita saber su capacidad (expresada en cantidad de personas que puede transportar al mismo tiempo), su velocidad máxima, su color y su peso.
-
-* **Chevrolet Corsa**: son vehículos con capacidad  de 4 personas, la velocidad máxima  de 150 km/h y pesan 1300 kg
-
-* **Económicos**: son vehículos que funcionan a gas y pueden tener instalado un tanque adicional. La capacidad, peso y velocidad máxima de estos vehículos depende de si cuenta con este tanque adicional. Puede llevar 4 si no tiene el tanque adicional, o 3 personas en caso contrario. Su velocidad máxima es 120 km/h sin tanque, y 110 km/h en otro caso. Su peso es 1200 kg, y se le suman 150 kg si tiene tanque adicional.
-
-
-* **Una Traffic**: es un vehículo de color blanco reconfigurable, porque se le puede cambiar el interior y el motor. Su capacidad depende de la capacidad de su interior, su velocidad máxima de su motor, y su peso es 4000 kg más el peso de su interior y su motor. Se cuenta con dos interiores, un interior _cómodo_ (capacidad 5, peso 700 kg) y un interior _popular_ (capacidad 12, peso 1000 kg). Se cuenta también con dos motores, el modelo _pulenta_ (velocidad máxima 130 km/h, peso 800 kg) y el modelo _batatón_ (velocidad máxima 80 km/h, peso 500 kg).
-
-* **Nuevas incorporaciones**: son vehículos diferentes a los anteriores, de los cuales se debe indicar capacidad, velocidad máxima, peso y color.
-
-
-Cada `sucursal` debe responder los siguientes mensajes:
-
-* `agregarAFlota(vehiculo)` 
-* `quitarDeFlota(vehiculo)`.
-* `pesoTotalFlota()`: suma del peso de cada vehículo en la flota.
-* `esRecomendable()`: indica si la sucursal tiene al menos 3 vehículos y todos los vehículos de su flota pueden ir al menos a 100 km/h.
-* `capacidadTotalYendoA(velocidad)`: obtiene la cantidad total de personas que puede transportar la sucursal, considerando solamente los autos de su flota cuya velocidad máxima sea mayor o igual a la velocidad indicada.
-* `colorDelAutoMasRapido()`: obtiene el color del vehículo cuya velocidad máxima sea la superior de toda la flota. Si hay varios vehículos en esta situación, no importa cual se considere.
-
-### Requerimientos
-
-Se pide desarrollar las clases y los objetos bien definidos (WKO) que hagan falta para modelar la flota y las sucursales según lo que se describió.
+- Administrar su flota, agregando o quitando vehículos.
+- Dada una reserva, saber qué vehículos de la flota son capaces de cumplirla.
+- Registrar un viaje, dada una reserva y el vehículo elegido para resolverla. Al registrar el viaje se debe validar que:
+  - el vehículo sea parte de la flota de la sucursal
+  - el vehículo sea capaz de cumplir con la reserva indicada
+- Dado un vehículo, saber todas las reservas que dicho vehículo resolvió (es decir, las reservas de todos los viajes en los que participó ese vehículo).
+- Dado un vehículo, saber la distancia total recorrida por ese vehículo en los viajes de la sucursal.
 
 ### Casos de prueba
 
-Considerar los siguientes vehículos. Se utilizan nombres de fantasía porque de esta forma las sucursales pueden comunicarse mas eficientemente con ellos por radio.
+La sucursal villaElisa tiene como flota a combi, academia y reyDeCopas (xeneize queda fuera de la flota).
 
-* Iron: un vehículo corsa de color rojo
-* Hulk: un vehículo corsa de color verde
-* Batimovil: un corsa de color negro
-* Humo: un económico de color gris con tanque adicional.
-* Humito: un económico de color gris SIN tanque adicional.
-* Humito2: otro económico de color gris SIN tanque adicional.
-* Traffic: en este momento está equipada con interior cómodo y el motor _batatón_
-* Galletita: una nueva incorporación con capacidad 5, velocidad máxima 160 km/h, peso 1200 kg y color beige.
+Se solicita una reserva para ir a la UNQ, de 4 personas, 30 km de distancia, en un máximo de 4 horas, excluyendo el color rojo.
 
-Se cuenta con dos sucursales: Villa Elisa y Varela.
+- De los vehículos de la flota, solo combi y academia son capaces de cumplir esta reserva (reyDeCopas queda descartado por ser de color rojo).
+- Registrar esta reserva con reyDeCopas debe fallar, porque el vehículo no respeta la reserva (su color está contraindicado).
+- Registrar esta reserva con xeneize debe fallar, porque el vehículo no es parte de la flota de villaElisa.
+- Se registra el viaje con combi.
 
-* La flota de Villa Elisa está integrada por: Iron, Hulk, Batimovil, Humo, Galletita. El peso total de la flota de Villa Elisa es 6300 kg, el color de su auto más rápido es beige y es una sucursal recomendable
+Se solicita una segunda reserva para ir a la UTN, de 4 personas, 60 km de distancia, en un máximo de 4 horas, no debe ser ruidoso y tiene que poder llevar silla de ruedas. Se registra el viaje con combi.
 
-* La flota de Varela está compuesta por: Iron, Humo, Humito, Humito2, Traffic. El peso total de la flota de Varela es 10400 kg,  el color de su auto más rápido es rojo y NO es una sucursal recomendable (porque la traffic puede ir a 80 cómo máximo).
+Se solicita una tercera reserva para ir a Unsam, de 4 personas, 70 km de distancia, en un máximo de 4 horas, excluyendo el color rojo. Se registra el viaje con academia.
 
-Programar casos de prueba para lo anterior y agregar otros que permitan probar toda la funcionalidad
+Luego de registrados estos tres viajes:
 
-## Viajes y reservas
+- combi debe tener registradas las reservas de ir a la UNQ y a la UTN, habiendo recorrido en total 90 km.
+- academia debe tener registrada únicamente la reserva de ir a Unsam, habiendo recorrido 70 km.
 
-Las reservas son solicitudes de viajes que deben indicar la cantidad personas, la distancia recorrer, el tiempo máximo de viaje en horas. Además dado que esta cooperativa considera la sensibilidad cromática y las neurodivergencias, en la solicitud se pueden indicar los colores que estan contraindicados para alguna de las personas que viajan.
+### 4. Para reflexionar:
 
-Por otro lado, los viajes son reservas resueltas por un vehículo determinado. Y para que un vehículo pueda asignarse a un viaje se deben cumplir las siguientes condiciones:  
+¿Da igual que las colecciones de flotas y viajes en la sucursal sean listas o conjuntos? Si piensas que no, cambia una implementación
+por la otra y revisa el resultado.
 
-a. Que la velocidad máxima supere a la velocidad promedio que necesita el viaje (calculada como distancia a recorrer / tiempo máximo) en al menos 10 km/h; 
-b. Que la capacidad del auto sea suficiente para la cantidad de personas de la reserva; 
-c. Que el auto no sea de un color contraindicado. 
+¿Dónde se instancia un viaje, dentro o fuera de la clase Sucursal?. Pensar como sería la alternativa.
 
+¿La combi es un objeto autodefinido o una instancia de clase? ¿Se puede usar la otra variante indistintamente?
 
+Dibujar el diagrama dinámico que muestra el estado final del último test.
 
-### Requerimientos
-
-* Modelar los objetos y clases necesarios para las reservas y viajes.
-
-* Poder determinar si un vehículo está habilitado para satisfacer una reserva. 
-
-* Agregarle a las sucursales la capacidad de responder qué autos pueden hacer un viaje.
-
-* Modelar el registro histórico de los servicios realizados por cada sucursal, a través del mensaje `registrarViaje(reserva,auto)`
-
-* Agregar en la sucursal la capacidad de responder:
-
-  - cuántos viajes hizo un vehículo para esa sucursal.
-  - cuántos viajes se hicieron que superen una determinada distancia.
-  - cuántos lugares quedaron libres en total (considerando todos sus viajes). Por ejemplo: si la sucursal hizo un viaje de 2 personas usando un auto de capacidad 5, ese viaje tuvo 3 lugares libres.
-
-## Retribución de los viajes
-
-Cada sucursal acuerda con las personas conductoras un valor por kilómetro y una retribución mínima por viaje. Por ejemplo, si el equipo de una sucursal acuerda 3 $/km y $30 de mínimo por viaje, entonces un viaje de 7 km se paga $30 (porque 3 x 7 = 21 no llega a 30), y un viaje de 25 km lo paga 75 pesos (3 x 25 = 75 supera el mínimo de 30).
-
-### Requerimientos
-
-Agregar en los objetos que corresponda el comportamiento que permita determinar cuánto pagarle a un vehículo, de acuerdo a los viajes que hizo para una determinada sucursal. 
-
-
-
+Dibujar con un diagrama estático la relación entre los tipos Viaje, Reserva y Vehículo (y las entidades que las implementan).
