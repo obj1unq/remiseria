@@ -1,9 +1,143 @@
-import example.pepita
+import example.*
 
-describe "group of tests for pepita" {
+describe "chasqui" {
 
-  test "pepita has initial energy" {
-    assert.equals(100, pepita.energy())
+
+  const reyDeCopas = new Torino(color=rojo, autonomia=300, velocidadMaxima=120)
+  const academia = new Torino(color=celeste, autonomia=250, velocidadMaxima=110)
+  const cuervo = new Economico(adaptaciones=#{tanqueExtra, transportadorSilla})
+  const xeneize = new Economico(adaptaciones=#{cañoSilencioso})
+  const millonario = new Economico(adaptaciones=#{})
+
+  test "Torino: rey de copas" {
+    assert.equals(rojo, reyDeCopas.color())
+    assert.equals(300, reyDeCopas.autonomia())
+    assert.equals(120, reyDeCopas.velocidadMaxima())
+    assert.equals(4, reyDeCopas.capacidad())
+    assert.notThat(reyDeCopas.puedeLlevarSillaDeRuedas())
+    assert.that(reyDeCopas.ruidoso())
+  }
+  test "Torino: academia" {
+    assert.equals(celeste, academia.color())
+    assert.equals(250, academia.autonomia())
+    assert.equals(110, academia.velocidadMaxima())
+    assert.equals(4, academia.capacidad())
+    assert.notThat(academia.puedeLlevarSillaDeRuedas())
+    assert.that(academia.ruidoso())
+  }
+
+  test "Economico: cuervo" {
+    assert.equals(beige, cuervo.color())
+    assert.equals(380, cuervo.autonomia())
+    assert.equals(80, cuervo.velocidadMaxima())
+    assert.equals(3, cuervo.capacidad())
+    assert.that(cuervo.puedeLlevarSillaDeRuedas())
+    assert.notThat(cuervo.ruidoso())
+  }
+
+  test "Economico: xeneize" {
+    assert.equals(beige, cuervo.color())
+    assert.equals(190, xeneize.autonomia())
+    assert.equals(115, xeneize.velocidadMaxima())
+    assert.equals(5, xeneize.capacidad())
+    assert.notThat(xeneize.puedeLlevarSillaDeRuedas())
+    assert.notThat(xeneize.ruidoso())
+  }
+
+  test "Economico: millonario" {
+    assert.equals(beige, millonario.color())
+    assert.equals(200, millonario.autonomia())
+    assert.equals(120, millonario.velocidadMaxima())
+    assert.equals(5, millonario.capacidad())
+    assert.notThat(millonario.puedeLlevarSillaDeRuedas())
+    assert.that(millonario.ruidoso())
+  }
+
+
+  test "combi con interior accesible y motor urbano" {
+    assert.equals(celeste, combi.color())
+    assert.equals(1000, combi.autonomia())
+    assert.equals(130, combi.velocidadMaxima())
+    assert.equals(5, combi.capacidad())
+    assert.that(combi.puedeLlevarSillaDeRuedas())
+    assert.notThat(combi.ruidoso())
+  } 
+
+  test "combi con interior espacioso y motor deportivo" {
+    combi.motor(deportivo)
+    combi.interior(espacioso)
+    assert.equals(celeste, combi.color())
+    assert.equals(400, combi.autonomia())
+    assert.equals(230, combi.velocidadMaxima())
+    assert.equals(7, combi.capacidad())
+    assert.notThat(combi.puedeLlevarSillaDeRuedas())
+    assert.that(combi.ruidoso())
+  } 
+
+  test "una reserva exigente puede ser cumplida por un vehiculo (exito total)" {
+    const reserva = new Reserva(capacidad=5, distancia=480, tiempo=4,
+        debeSerSilencioso=true, coloresContraindicados=#{rojo, verdeFluor}, debeLlevarSillaDeRuedas=true)
+    assert.that(reserva.cumple(combi))
+  }
+
+  test "una reserva falla si el vehiculo no tiene capacidad suficiente" {
+    const reserva = new Reserva(capacidad=5, distancia=200, tiempo=2)
+    assert.notThat(reserva.cumple(reyDeCopas))
+  }
+
+  test "una reserva falla si el vehiculo no tiene autonomia suficiente" {
+    const reserva = new Reserva(capacidad=5, distancia=195, tiempo=2)
+    assert.notThat(reserva.cumple(xeneize))
+  }
+
+  test "una reserva falla si la velocidad maxima del vehiculo no alcanza" {
+    const reserva = new Reserva(capacidad=5, distancia=200, tiempo=1)
+    assert.notThat(reserva.cumple(millonario))
+  }
+
+test "una reserva falla si el color del vehiculo esta contraindicado" {
+    const reserva = new Reserva(capacidad=4, distancia=150, tiempo=1.5,
+        coloresContraindicados=#{rojo})
+    assert.notThat(reserva.cumple(reyDeCopas))
+}
+
+  test "una reserva falla si necesita silla de ruedas y el vehiculo no puede" {
+    const reserva = new Reserva(capacidad=5, distancia=150, tiempo=1.5,
+        debeLlevarSillaDeRuedas=true)
+
+    assert.notThat(reserva.cumple(millonario))
+  }
+
+  test "una reserva falla si necesita silencio y el vehiculo es ruidoso" {
+    const reserva = new Reserva(capacidad=5, distancia=150, tiempo=1.5,
+        debeSerSilencioso=true)
+       
+    assert.notThat(reserva.cumple(millonario))
+  }
+
+  test "viajes y sucursales" {
+      const villaElisa = new Sucursal(flota = #{combi, academia, reyDeCopas})
+
+      const irAUnq =  new Reserva(capacidad=4, distancia=30, tiempo=4, coloresContraindicados=#{rojo})
+      assert.equals(#{combi, academia}, villaElisa.vehiculos(irAUnq))
+      assert.throwsException({villaElisa.registrarViaje(irAUnq, reyDeCopas)}) //falla la reserva por el color
+      assert.throwsException({villaElisa.registrarViaje(irAUnq, xeneize)}) //falla la flota
+      villaElisa.registrarViaje(irAUnq, combi)
+
+      const irAUTN =  new Reserva(capacidad=4, distancia=60, tiempo=4, debeSerSilencioso = true, debeLlevarSillaDeRuedas=true)
+      villaElisa.registrarViaje(irAUTN, combi)
+
+      const irAUnsam =  new Reserva(capacidad=4, distancia=70, tiempo=4, coloresContraindicados=#{rojo})
+      villaElisa.registrarViaje(irAUnsam, academia)
+
+      assert.equals(#{irAUnq, irAUTN}, villaElisa.reservas(combi))
+      assert.equals(90, villaElisa.distancia(combi))
+
+      assert.equals(#{irAUnsam}, villaElisa.reservas(academia))
+      assert.equals(70, villaElisa.distancia(academia))
+
+
   }
 
 }
+
